@@ -1,0 +1,187 @@
+<app-sidebar></app-sidebar>
+
+<section class="content">
+  <div class="body_scroll">
+      <div class="block-header">
+          <div class="row">
+              <div class="col-lg-7 col-md-6 col-sm-12">
+                <h2>Dashboard</h2>
+                    <br>
+                  <ul class="breadcrumb">
+                      <li class="breadcrumb-item"><a><i class="zmdi zmdi-home"></i> Admin</a></li>
+                      <li class="breadcrumb-item active">Employees List</li>
+                  </ul>
+                  <button class="btn btn-primary btn-icon mobile_menu" type="button"><i class="zmdi zmdi-sort-amount-desc"></i></button>
+              </div>
+              <div class="col-lg-5 col-md-6 col-sm-12">                
+               <button mat-fab color="primary"class="add-button"(click)="OpenDialogAdd()" aria-label="Example icon button with a delete icon">
+               <mat-icon  class="icon">add</mat-icon>
+               </button>
+              </div>
+          </div>
+      </div>
+      <br>
+      <br>
+      <div class="container-fluid">
+          <div class="row clearfix">
+              <div class="col-lg-15">
+                  <div class="card">
+                      <div class="table-responsive">
+                        <table class="table table-hover product_item_list c_table theme-color mb-0">
+                          <thead>
+                                  <tr>
+                                    <!-- <th style="color: #555;">Image</th> -->  
+                                      <th style="color: #555;">First Name</th>
+                                      <th style="color: #555;">Last Name</th>
+                                      <th style="color: #555;">Employee Name</th>
+                                      <th style="color: #555;" data-breakpoints="sm xs">Email</th>
+                                      <th style="color: #555;" data-breakpoints="sm xs">Phone</th>
+                                      <th style="color: #555;" data-breakpoints="xs">Salary</th>
+                                      <th style="color: #555;" data-breakpoints="sm xs">City</th>
+                                      <th style="color: #555;" data-breakpoints="sm xs">State</th>
+                                      <th style="color: #555;" data-breakpoints="sm xs">Street</th>
+                                      <th style="color: #555;" data-breakpoints="sm xs">Zip Code</th>
+                                      <th style="color: #555;" data-breakpoints="sm xs">Country</th>
+                                      <th style="color: #555;" data-breakpoints="xs md">Hire Date</th>
+
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr *ngFor="let employee of employees">
+                                      <!-- <td><img src="assets/img/{{employee.image}}"  width="48" alt="profile-image"></td> -->
+                                      <td><span class="text-muted">{{ employee.firstName }}</span></td>
+                                      <td><span class="text-muted">{{ employee.lastName }}</span></td>
+                                      <td><span class="text-muted">{{ employee.employeeName }}</span></td>
+                                      <td><span class="text-muted">{{ employee.email }}</span></td>
+                                      <td><span class="text-muted">{{ employee.phone }}</span></td>
+                                      <td>${{ employee.salary }}</td>
+                                      <td><span class="text-muted">{{ employee.city }}</span></td>
+                                      <td><span class="text-muted">{{ employee.state }}</span></td>
+                                      <td><span class="text-muted">{{ employee.street }}</span></td>
+                                      <td><span class="text-muted">{{ employee.zipCode }}</span></td>
+                                      <td><span class="text-muted">{{ employee.country }}</span></td>
+                                      <td><span class="col-green">{{ employee.hireDate | date: 'mediumDate' }}</span></td>
+                                      
+                                     
+                                  
+                                  </tr>
+                                 
+                                
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+                  <div class="card">
+                      <div >                            
+                          
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+
+
+
+  <ng-template #callCreateDialog>
+    <div class="mat-dialog-container">
+    <div class="dialog-header">
+    <h2>Add Employee</h2>
+    </div>
+    <form class="example-container" [formGroup]="form">
+    
+        
+            <mat-form-field appearance="outline">
+                <mat-label>Enter First Name</mat-label>
+                <input matInput type="text" placeholder="Enter first name" formControlName="firstName">
+                <mat-error *ngIf="edit.get('firstName')?.hasError('required')">First name is required</mat-error>
+              </mat-form-field>
+              
+              <div class="form-field-spacer"></div>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Last Name</mat-label>
+                <input matInput type="text" placeholder="Enter last name" formControlName="lastName">
+                <mat-error *ngIf="edit.get('lastName')?.hasError('required')">Last name is required</mat-error>
+              </mat-form-field>
+
+              <div class="form-field-spacer"></div>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Employee Name</mat-label>
+                <input matInput type="text" placeholder="Enter employee name" formControlName="employeeName">
+                <mat-error *ngIf="edit.get('employeeName')?.hasError('required')">Employee name is required</mat-error>
+              </mat-form-field>
+
+              <div class="form-field-spacer"></div>
+     
+     
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Salary</mat-label>
+                <input matInput type="text" placeholder="Enter Salary" formControlName="salary">
+                <mat-error *ngIf="form.get('salary')?.hasError('required')">salary is required</mat-error>
+              </mat-form-field>
+      
+              <div class="form-field-spacer"></div>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Email</mat-label>
+                <input matInput type="email" placeholder="Enter email" formControlName="email">
+                <mat-error *ngIf="form.get('email')?.hasError('required')">Email is required</mat-error>
+                <mat-error *ngIf="form.get('email')?.hasError('pattern')">Invalid email format</mat-error>
+              </mat-form-field>
+
+              <div class="form-field-spacer"></div>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Phone</mat-label>
+                <input matInput type="phone" placeholder="Enter phone" formControlName="phone">
+                <mat-error *ngIf="form.get('phone')?.hasError('required')">Phone is required</mat-error>
+              
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Enter City</mat-label>
+                <input matInput type="text" placeholder="Enter city name" formControlName="city">
+                <mat-error *ngIf="edit.get('city')?.hasError('required')">City name is required</mat-error>
+              </mat-form-field>
+
+              <div class="form-field-spacer"></div>
+
+                 <mat-form-field appearance="outline">
+                <mat-label>Enter Street</mat-label>
+                <input matInput type="text" placeholder="Enter street name" formControlName="street">
+                <mat-error *ngIf="edit.get('street')?.hasError('required')">Street name is required</mat-error>
+              </mat-form-field>
+
+              <div class="form-field-spacer"></div>  
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Enter State </mat-label>
+                <input matInput type="text" placeholder="Enter state name" formControlName="state">
+                <mat-error *ngIf="edit.get('state')?.hasError('required')">State name is required</mat-error>
+              </mat-form-field>
+
+              <div class="form-field-spacer"></div> 
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Zip Code</mat-label>
+                <input matInput type="text" placeholder="Enter zip code" formControlName="zipCode">
+                <mat-error *ngIf="edit.get('zipCode')?.hasError('required')">zip code is required</mat-error>
+              </mat-form-field>
+              <div class="form-field-spacer"></div>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Country</mat-label>
+                <input matInput type="text" placeholder="Enter country name" formControlName="country">
+                <mat-error *ngIf="edit.get('country')?.hasError('required')">country name is required</mat-error>
+              </mat-form-field>
+              
+    <div class="dialog-footer">
+    <button mat-raised-button color="primary"  mat-dialog-close="yes" >Update</button>
+    </div>
+    </form>
+    </div>
+    </ng-template>

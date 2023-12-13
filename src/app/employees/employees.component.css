@@ -1,0 +1,40 @@
+
+.add-button {
+    background-color: green;
+    position: absolute;
+    left: 420px;  
+  }
+
+.mat-dialog-container {
+    padding: 24px;
+    width: 400px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 8px;
+  }
+
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .dialog-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333333;
+  }
+
+  .example-container {
+    width: 100%;
+  }
+  .dialog-header {
+    text-align: center;
+    padding: 16px;
+  }
+  
+
+
+
