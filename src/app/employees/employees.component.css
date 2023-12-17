@@ -2,7 +2,7 @@
 .add-button {
     background-color: green;
     position: absolute;
-    left: 420px;  
+    left: 470px;  
   }
 
 .mat-dialog-container {
@@ -12,12 +12,18 @@
     background-color: #ffffff;
     border-radius: 8px;
   }
-
+  .preview-dialog-container {
+    padding: 24px;
+    width: 1000px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 8px;
+  }
   .dialog-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-top: 1px;
   }
 
   .dialog-header h2 {
@@ -27,14 +33,60 @@
     color: #333333;
   }
 
-  .example-container {
-    width: 100%;
-  }
+  
   .dialog-header {
     text-align: center;
     padding: 16px;
   }
   
+  section.content{
+    -moz-transition:all 0.5s;
+    -o-transition:all 0.5s;
+    -webkit-transition:all 0.5s;
+    transition:all 0.5s;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    -ms-border-radius:10px;
+    border-radius:10px;
+    background:#f5f5f5;
+    border:5px solid #fff;
+    padding:10px;
+    position:relative;
+    margin:20px 15px  20px 26px;
+    box-shadow:0 0 16px rgba(41,42,51,0.06),0 6px 20px rgba(41,42,51,0.02)
+}
 
 
+.preview {
+  cursor: pointer;
 
+}
+
+.pdf{
+  position: relative;
+  display: block;
+  height: 90%;
+  border: 1px solid lime;
+}
+.btn-group{
+  left: 17px;
+  top: 16px;
+}
+.mat-icon {
+  -webkit-user-select: none;
+  user-select: none;
+  background-repeat: no-repeat;
+  display: inline-block;
+  fill: currentColor;
+  height: 24px;
+  width: 24px;
+  overflow: hidden;
+}
+a {
+  color: #9a9fa5;
+}
+.size{
+  font-size: 10px;
+  font-style: inherit;
+  color: violet;
+}

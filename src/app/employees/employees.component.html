@@ -1,15 +1,13 @@
-<app-sidebar></app-sidebar>
 
-<section class="content">
-  <div class="body_scroll">
+<section class="content ">
+  <div class="body_scroll ">
       <div class="block-header">
           <div class="row">
               <div class="col-lg-7 col-md-6 col-sm-12">
                 <h2>Dashboard</h2>
                     <br>
                   <ul class="breadcrumb">
-                      <li class="breadcrumb-item"><a><i class="zmdi zmdi-home"></i> Admin</a></li>
-                      <li class="breadcrumb-item active">Employees List</li>
+                      <li class="breadcrumb-item"><a><i class="zmdi zmdi-home"></i> Employees List</a></li>
                   </ul>
                   <button class="btn btn-primary btn-icon mobile_menu" type="button"><i class="zmdi zmdi-sort-amount-desc"></i></button>
               </div>
@@ -24,13 +22,13 @@
       <br>
       <div class="container-fluid">
           <div class="row clearfix">
-              <div class="col-lg-15">
+              <div class="col-lg-12">
                   <div class="card">
                       <div class="table-responsive">
                         <table class="table table-hover product_item_list c_table theme-color mb-0">
                           <thead>
                                   <tr>
-                                    <!-- <th style="color: #555;">Image</th> -->  
+                                     <th style="color: #555;">Image</th>
                                       <th style="color: #555;">First Name</th>
                                       <th style="color: #555;">Last Name</th>
                                       <th style="color: #555;">Employee Name</th>
@@ -38,17 +36,16 @@
                                       <th style="color: #555;" data-breakpoints="sm xs">Phone</th>
                                       <th style="color: #555;" data-breakpoints="xs">Salary</th>
                                       <th style="color: #555;" data-breakpoints="sm xs">City</th>
-                                      <th style="color: #555;" data-breakpoints="sm xs">State</th>
                                       <th style="color: #555;" data-breakpoints="sm xs">Street</th>
-                                      <th style="color: #555;" data-breakpoints="sm xs">Zip Code</th>
                                       <th style="color: #555;" data-breakpoints="sm xs">Country</th>
                                       <th style="color: #555;" data-breakpoints="xs md">Hire Date</th>
+                                      <th style="color: #555;" data-breakpoints="xs md">Attachments</th>
 
                                   </tr>
                               </thead>
                               <tbody>
                                   <tr *ngFor="let employee of employees">
-                                      <!-- <td><img src="assets/img/{{employee.image}}"  width="48" alt="profile-image"></td> -->
+                                      <td><img src="assets/Files/{{employee.image}}"  width="48" alt="profile-image"></td>
                                       <td><span class="text-muted">{{ employee.firstName }}</span></td>
                                       <td><span class="text-muted">{{ employee.lastName }}</span></td>
                                       <td><span class="text-muted">{{ employee.employeeName }}</span></td>
@@ -56,14 +53,34 @@
                                       <td><span class="text-muted">{{ employee.phone }}</span></td>
                                       <td>${{ employee.salary }}</td>
                                       <td><span class="text-muted">{{ employee.city }}</span></td>
-                                      <td><span class="text-muted">{{ employee.state }}</span></td>
                                       <td><span class="text-muted">{{ employee.street }}</span></td>
-                                      <td><span class="text-muted">{{ employee.zipCode }}</span></td>
                                       <td><span class="text-muted">{{ employee.country }}</span></td>
                                       <td><span class="col-green">{{ employee.hireDate | date: 'mediumDate' }}</span></td>
+                                    
+                                        <!-- 
+                                             <button mat-icon-button (click)="downloadAttachment(employee.id)" >
+                                        <mat-icon >download</mat-icon>
+                                      </button>
+                                         -->
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Preview</button>
+
+                                      <div class="dropdown-menu">
+                                        <a (click)="previewAttachment(attachment.employeeId,attachment.id)" class="dropdown-item preview" *ngFor="let attachment of employee.attachments"> 
+                                          
+                                          <!--  <a  [href]="'./assets/Files/' + attachment.fileName" download="{{attachment.fileName}}">
+                                            <mat-icon class="download" >download</mat-icon>
+                                          </a>
+  -->
+                                         
+                                          {{attachment.fileName }}  <span class="size"> {{ formatFileSize(attachment.fileData) }}</span>
+
+                                          
+                                        </a>
                                       
-                                     
-                                  
+                                      </div>
+                                  </div>
+
                                   </tr>
                                  
                                 
@@ -84,13 +101,18 @@
 
 
 
-
   <ng-template #callCreateDialog>
     <div class="mat-dialog-container">
     <div class="dialog-header">
     <h2>Add Employee</h2>
     </div>
-    <form class="example-container" [formGroup]="form">
+
+    <mat-stepper [linear]="isLinear" #stepper>
+
+    <mat-step [stepControl]="form">
+
+      <br>
+     <form class="example-container" [formGroup]="form">
     
         
             <mat-form-field appearance="outline">
@@ -123,9 +145,16 @@
                 <input matInput type="text" placeholder="Enter Salary" formControlName="salary">
                 <mat-error *ngIf="form.get('salary')?.hasError('required')">salary is required</mat-error>
               </mat-form-field>
-      
-              <div class="form-field-spacer"></div>
-
+              
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+     </form>
+    </mat-step>
+    <mat-step [stepControl]="form">
+      <br>
+      <form class="example-container" [formGroup]="form">
+     
               <mat-form-field appearance="outline">
                 <mat-label>Enter Email</mat-label>
                 <input matInput type="email" placeholder="Enter email" formControlName="email">
@@ -159,29 +188,71 @@
               <div class="form-field-spacer"></div>  
               
               <mat-form-field appearance="outline">
-                <mat-label>Enter State </mat-label>
-                <input matInput type="text" placeholder="Enter state name" formControlName="state">
-                <mat-error *ngIf="edit.get('state')?.hasError('required')">State name is required</mat-error>
-              </mat-form-field>
-
-              <div class="form-field-spacer"></div> 
-              
-              <mat-form-field appearance="outline">
-                <mat-label>Enter Zip Code</mat-label>
-                <input matInput type="text" placeholder="Enter zip code" formControlName="zipCode">
-                <mat-error *ngIf="edit.get('zipCode')?.hasError('required')">zip code is required</mat-error>
-              </mat-form-field>
-              <div class="form-field-spacer"></div>
-
-              <mat-form-field appearance="outline">
                 <mat-label>Enter Country</mat-label>
                 <input matInput type="text" placeholder="Enter country name" formControlName="country">
                 <mat-error *ngIf="edit.get('country')?.hasError('required')">country name is required</mat-error>
               </mat-form-field>
               
-    <div class="dialog-footer">
-    <button mat-raised-button color="primary"  mat-dialog-close="yes" >Update</button>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+
+          <button mat-button matStepperNext>Next</button>
+
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="form">
+      <br>
+      
+        <label >Employee Image:</label>
+        <input type="file" id="employeeImage" name="employeeImage" (change)="UploadEmployeeImage($event)">
+      
+                
+              <br>
+              <br>
+
+              <label>Pdf:</label>
+              <input type="file" (change)="UploadAttachments($event)" multiple />
+            
+              <br>
+              <br>
+
+              <label>Word:</label>
+              <input type="file" (change)="UploadAttachments($event)" multiple />
+
+              <div class="text-danger">
+                {{ validationErrors }}
+              </div> 
+              
+              <br>
+              <br>
+          
+           <div class="dialog-footer">
+              <button mat-button matStepperPrevious>Back</button>
+
+          <button mat-raised-button color="primary" (click)="add()" [disabled]="!form.valid">Add</button>
+        </div>
+    </mat-step>
+  </mat-stepper>
+
     </div>
-    </form>
-    </div>
-    </ng-template>
+    
+  </ng-template>
+
+
+    <ng-template #callAttachmentDailog>
+      <div class=".preview-dialog-container">
+  
+          <!--    <pdf-viewer [src]="'./assets/Files/' + attachment.fileName"
+                [render-text]="true"
+                [original-size]="true"
+                style="width: 1000px; height: 600px">
+              </pdf-viewer>
+              -->
+             
+              <iframe [src]='urlSafe' width='1000px' height='600px' frameborder='0'></iframe>
+
+      </div>
+
+   </ng-template>
+

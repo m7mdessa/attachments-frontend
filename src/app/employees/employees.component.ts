@@ -1,10 +1,9 @@
-
 import { Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import { EmployeeService } from 'src/app/service/employee.service';
 import { ToastrService } from 'ngx-toastr'; 
 import { FormGroup, FormControl,Validators } from '@angular/forms';   
 import { MatDialog } from '@angular/material/dialog';
-
+import { SafeResourceUrl, DomSanitizer } from "@angular/platform-browser";
 @Component({
   selector: 'app-employees',
   templateUrl: './employees.component.html',
@@ -12,22 +11,51 @@ import { MatDialog } from '@angular/material/dialog';
 
 })
 export class EmployeesComponent implements OnInit {
+  [x: string]: any;
   @ViewChild('callCreateDialog') callCreateDialog! :TemplateRef<any>
   @ViewChild('callDeleteDailog') callDelete!:TemplateRef<any>
   @ViewChild('callEditDailog') callEditDailog!:TemplateRef<any>
   @ViewChild('callDetailDailog') callDetailDailog!:TemplateRef<any>
+  @ViewChild('callAttachmentDailog') callAttachmentDailog!:TemplateRef<any>
 
-
+  validationErrors: string = '';
   employees: any[] = [];
-  Employee: any;
+  attachments:any[]=[];
+  attachment:any;
+  employee: any;
+  attachmentDataList: File[] = [];
   isLinear = false;
+  urlSafe: SafeResourceUrl | undefined;
+  employeeImage:  File[] = [];
 
-  constructor( private employeeService: EmployeeService, private toastr: ToastrService,private dialog:MatDialog) {}
+  constructor( private sanitizer: DomSanitizer,private employeeService: EmployeeService, private toastr: ToastrService,private dialog:MatDialog) {}
 
 
   ngOnInit(): void {
     this.getEmployees();
+
   }
+
+
+  getEmployees() {
+    this.employeeService.getAll().subscribe((employees) => {
+      this.employees = employees;
+  
+      this.employees.forEach((employee) => {
+        const employeeId = employee.id;
+  
+        this.employeeService.getEmployeeAttachments(employeeId).subscribe((attachments) => {
+          employee.attachments = attachments;
+          console.log('attachments:', this.attachments);
+
+        });
+
+      });
+    });
+  }
+
+
+
 
   form :FormGroup = new FormGroup({
     firstName: new FormControl('', [Validators.required]),
@@ -37,11 +65,93 @@ export class EmployeesComponent implements OnInit {
     phone: new FormControl('', [Validators.required]),
     employeeName: new FormControl('', [Validators.required]),
     city: new FormControl('', [Validators.required]),
-    state: new FormControl('', [Validators.required]),
     street: new FormControl('', [Validators.required]),
-    zipCode: new FormControl('', [Validators.required]),
     country: new FormControl('', [Validators.required]),
   });
+
+  UploadAttachments(event: any): void {
+    const fileList: FileList = event.target.files;
+    for (let i = 0; i < fileList.length; i++) {
+      this.attachmentDataList.push(fileList[i]);
+    }
+    
+  }
+  
+  UploadEmployeeImage(event: any): void {
+    const fileList: FileList = event.target.files;
+
+    for (let i = 0; i < fileList.length; i++) {
+      this.employeeImage.push(fileList[i]);
+    }
+    
+  }
+
+  add(){
+
+    console.log(this.form.value);
+    this.employeeService.add(this.attachmentDataList,this.employeeImage,this.form.value).subscribe({
+      next: () => {
+         console.log('Employee created successfully!');
+         this.toastr.success('Employee added successfully.', 'Success');
+
+         this.getEmployees(); 
+         this.dialog.closeAll();
+         this.form.reset();
+          },
+          error: (error) => {
+            
+            console.log( this.form.value);
+    
+            if (error.status === 500) {
+              if (Array.isArray(error.error)) {
+                this.validationErrors =  error.error.join(', ');
+              } else if (typeof error.error === 'string') {
+                this.validationErrors = error.error.substring(25, 84).trim();
+              } else {
+                this.validationErrors = 'An unexpected validation error occurred.';
+              }
+            } else {
+              this.validationErrors = 'An unexpected error occurred.';
+            }
+          this.toastr.error('Error while add employee.', 'Error'); 
+     }
+    });
+  }
+
+  previewAttachment(employeeId: number, id: number) {
+    this.dialog.open(this.callAttachmentDailog);
+    this.employeeService.getAttachmentById(employeeId, id).subscribe((attachment) => {
+      this.attachment = attachment;
+
+      this.urlSafe = this.getSafeUrl(`/assets/Files/${this.attachment.fileName}`);
+      console.log('attachments:', this.attachment);
+    });
+  }
+  
+  getSafeUrl(url: string): any {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+  
+  downloadAttachment(employeeId: number) {
+    this.employeeService.downloadAttachment(employeeId).subscribe((attachment) => {
+        this.attachment = attachment;
+        console.log('attachments:', this.attachment);
+    
+    });
+  }
+
+  formatFileSize(fileData: Uint8Array): string {
+    const bytes = fileData.length;
+
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
 
   edit :FormGroup  = new FormGroup({
     id: new FormControl('', [Validators.required]),
@@ -69,21 +179,14 @@ export class EmployeesComponent implements OnInit {
   }
 
 
-  OpenDialogDetail(id:number){
+ OpenDialogDetail(id:number){
     
     this.dialog.open(this.callDetailDailog);
-    this.employeeService.getById(id).subscribe( (Employee) => {
-        this.Employee = Employee;
+    this.employeeService.getById(id).subscribe( (employee) => {
+       this.employee = employee;
       
-      });  
-    }
-
-  getEmployees() {
-    this.employeeService.getAll().subscribe((employees) => {
-      this.employees = employees;
-    });
-
-  }
+     });  
+   }
 
 
       
@@ -168,27 +271,8 @@ export class EmployeesComponent implements OnInit {
      
  
    }
+   
 
-  addEmployee(){
-    
-    console.log(this.form.value);
-    this.employeeService.add(this.form.value).subscribe((_res:any) => {
-         console.log('Employee created successfully!');
-         this.toastr.success('Employee added successfully.', 'Success');
-         this.getEmployees(); 
-         this.dialog.closeAll();
-         this.form.reset();
-          },
-          (error) => {
-            console.log( this.form.value);
-    
-            console.log('Error while add employee:', error);
-              this.toastr.error('Error while add employee.', 'Error'); 
-            
-    
-          });
-          
-  }
-
+  
 
 }
