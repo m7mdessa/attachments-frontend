@@ -68,10 +68,10 @@
                                       <div class="dropdown-menu">
                                         <a (click)="previewAttachment(attachment.employeeId,attachment.id)" class="dropdown-item preview" *ngFor="let attachment of employee.attachments"> 
                                           
-                                          <!--  <a  [href]="'./assets/Files/' + attachment.fileName" download="{{attachment.fileName}}">
+                                           <a  [href]="'./assets/Files/' + attachment.fileName" download="{{attachment.fileName}}">
                                             <mat-icon class="download" >download</mat-icon>
                                           </a>
-  -->
+  
                                          
                                           {{attachment.fileName }}  <span class="size"> {{ formatFileSize(attachment.fileData) }}</span>
 
