@@ -22,7 +22,6 @@ export class EmployeesComponent implements OnInit {
   employees: any[] = [];
   attachments:any[]=[];
   attachment:any;
-  employee: any;
   attachmentDataList: File[] = [];
   isLinear = false;
   urlSafe: SafeResourceUrl | undefined;
@@ -42,11 +41,10 @@ export class EmployeesComponent implements OnInit {
       this.employees = employees;
   
       this.employees.forEach((employee) => {
-        const employeeId = employee.id;
+        const attachmentGroupId = employee.attachmentGroupId;
   
-        this.employeeService.getEmployeeAttachments(employeeId).subscribe((attachments) => {
+        this.employeeService.getEmployeeAttachments(attachmentGroupId).subscribe((attachments) => {
           employee.attachments = attachments;
-          console.log('attachments:', this.attachments);
 
         });
 
@@ -107,6 +105,8 @@ export class EmployeesComponent implements OnInit {
                 this.validationErrors =  error.error.join(', ');
               } else if (typeof error.error === 'string') {
                 this.validationErrors = error.error.substring(25, 84).trim();
+              //this.validationErrors = error.error;
+
               } else {
                 this.validationErrors = 'An unexpected validation error occurred.';
               }
@@ -118,9 +118,9 @@ export class EmployeesComponent implements OnInit {
     });
   }
 
-  previewAttachment(employeeId: number, id: number) {
+  previewAttachment(attachmentGroupId: number) {
     this.dialog.open(this.callAttachmentDailog);
-    this.employeeService.getAttachmentById(employeeId, id).subscribe((attachment) => {
+    this.employeeService.getAttachmentGroup(attachmentGroupId).subscribe((attachment) => {
       this.attachment = attachment;
 
       this.urlSafe = this.getSafeUrl(`/assets/Files/${this.attachment.fileName}`);
@@ -153,24 +153,8 @@ export class EmployeesComponent implements OnInit {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  edit :FormGroup  = new FormGroup({
-    id: new FormControl('', [Validators.required]),
-    firstName: new FormControl('', [Validators.required]),
-    lastName: new FormControl('', [Validators.required]),
-    salary: new FormControl('', [Validators.required]),
-    email: new FormControl(''),
-    departmentId: new FormControl('', [Validators.required]),
-    phone: new FormControl('', [Validators.required]),
-   
-  });
-
-  matchError() {
-    if (this.form.controls['password'].value === this.form.controls['confirmPassword'].value) {
-      this.form.controls['confirmPassword'].setErrors(null);
-    } else {
-      this.form.controls['confirmPassword'].setErrors({ misMatch: true });
-    }
-  }
+  
+ 
 
     OpenDialogAdd(){
     
@@ -179,100 +163,13 @@ export class EmployeesComponent implements OnInit {
   }
 
 
- OpenDialogDetail(id:number){
-    
-    this.dialog.open(this.callDetailDailog);
-    this.employeeService.getById(id).subscribe( (employee) => {
-       this.employee = employee;
-      
-     });  
-   }
+
 
 
       
    
-  openEditDailog(employee: any){
-    this.edit.setValue({
-      id: employee.id,
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      salary: employee.salary,
-      email: employee.email,
-      departmentId: employee.departmentId,
-      phone: employee.phone,
+
+
    
-
-    });
-    
-    const dialogRef= this.dialog.open(this.callEditDailog);
-    dialogRef.afterClosed().subscribe((result)=>{
-       if(result!=undefined)
-       {
-        if (result == 'yes') {
-          this.employeeService.update(this.edit.value).subscribe(
-            (response) => {
-              console.log( this.edit.value);
-      
-              console.log('Employee name updated successfully:', this.edit.value);
-              this.toastr.success('Employee updated successfully.', 'Success');
-              this.getEmployees(); 
-      
-              this.dialog.closeAll();
-            
-            },
-            (error) => {
-              console.log( this.edit.value);
-      
-              console.log('Error while update employee:', error);
-                this.toastr.error('Error while update employee.', 'Error'); 
-      
-            }
-          );   
-        } else if (result == 'no') {
-          console.log("Thank you");
-        }
-        
-           
-       }
- 
-    })
-   }
-   
-  openDeleteDailog(id:number){
-    console.log(id)
-
-    const dialogRef= this.dialog.open(this.callDelete);
-    dialogRef.afterClosed().subscribe((result)=>{
-       if(result!=undefined)
-       {
-        if (result == 'yes') {
-          this.employeeService.delete(id).subscribe(
-            () => {
-              this.employees = this.employees.filter((employee) => employee.id !== id);
-              console.log('Employee deleted successfully.');
-              this.toastr.success('Employee deleted successfully.', 'Success');
-
-              this.dialog.closeAll();  
-              this.getEmployees(); 
-    
-            },
-            (error) => {
-              console.log('Error while deleting Employee:', error);
-            }
-          );         
-        } else if (result == 'no') {
-          console.log("Thank you");
-        }
-        
-           
-       }
- 
-    })
-     
- 
-   }
-   
-
-  
 
 }

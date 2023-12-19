@@ -15,16 +15,12 @@ export class EmployeeService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/GetEmployeeById/${id}`);
+  getAttachmentGroup(attachmentGroupId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/GetAttachmentGroup/${attachmentGroupId}`);
   }
 
-  getAttachmentById(employeeId: number,id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/GetAttachmentById/${employeeId}/${id}`);
-  }
-
-  getEmployeeAttachments(employeeId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/EmployeeAttachments/${employeeId}`);
+  getEmployeeAttachments(attachmentGroupId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/EmployeeAttachments/${attachmentGroupId}`);
   }
 
   downloadAttachment(employeeId: number): Observable<any> {
@@ -53,13 +49,6 @@ export class EmployeeService {
     return this.http.post(this.apiUrl, formData);
   }
 
-  update(employee: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/Update/`, employee);
-  }
-
-  delete(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/Delete/${id}`);
-  }
 
 
 }
