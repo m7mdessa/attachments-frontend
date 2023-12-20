@@ -69,11 +69,18 @@ export class EmployeesComponent implements OnInit {
 
   UploadAttachments(event: any): void {
     const fileList: FileList = event.target.files;
+  
     for (let i = 0; i < fileList.length; i++) {
-      this.attachmentDataList.push(fileList[i]);
+      const file = fileList[i];
+  
+      if (!this.attachmentDataList.some(existingFile => existingFile.name === file.name)) {
+        this.attachmentDataList.push(file);
+      } else {
+        console.log(`File "${file.name}" already exists in the list. Skipping.`);
+      }
     }
-    
   }
+  
   
   UploadEmployeeImage(event: any): void {
     const fileList: FileList = event.target.files;
